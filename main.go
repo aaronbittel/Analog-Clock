@@ -95,7 +95,9 @@ func DrawSecondHand(second int) {
 		THINKNESS   = 5
 	)
 
-	angle := -(360*second/60 - 90)
+	secondProgress := 360 / 60 * second
+
+	angle := -secondProgress + 90
 	x := float32((RADIUS * RADIUS_PERC) * math.Cos(float64(angle)*rl.Deg2rad))
 	y := float32((RADIUS * RADIUS_PERC) * math.Sin(float64(angle)*rl.Deg2rad))
 
@@ -108,9 +110,10 @@ func DrawSecondHand(second int) {
 func DrawMinuteHand(minute, second int) {
 	const RADIUS_PERC = 0.85
 
+	minuteProgress := 360 / 60 * float32(minute)
 	secondProgress := 360 / 60 * float32(second) / 60
 
-	angle := -(360*float32(minute)/60 - 90) - secondProgress
+	angle := -minuteProgress + 90 - secondProgress
 	x := float32((RADIUS * RADIUS_PERC) * math.Cos(float64(angle)*rl.Deg2rad))
 	y := float32((RADIUS * RADIUS_PERC) * math.Sin(float64(angle)*rl.Deg2rad))
 
@@ -123,10 +126,11 @@ func DrawMinuteHand(minute, second int) {
 func DrawHourHand(hour, minute, second int) {
 	const RADIUS_PERC = 0.65
 
-	minuteProgress := 360 / 60 * float32(minute) / 60
-	secondProgress := 360 / 60 * float32(minute) / 60
+	hourProgress := DEG_PER_HOUR * float32(hour%12)
+	minuteProgress := DEG_PER_HOUR * float32(minute) / 60
+	secondProgress := DEG_PER_HOUR * float32(second) / (60 * 60)
 
-	angle := -(360*float32(hour)/12 - 90) - minuteProgress - secondProgress
+	angle := -hourProgress + 90 - minuteProgress - secondProgress
 	x := float32((RADIUS * RADIUS_PERC) * math.Cos(float64(angle)*rl.Deg2rad))
 	y := float32((RADIUS * RADIUS_PERC) * math.Sin(float64(angle)*rl.Deg2rad))
 
