@@ -20,6 +20,8 @@ const (
 	HAND_THINKNESS = 5
 )
 
+var Debug = false
+
 func main() {
 	rl.InitWindow(WIDTH, HEIGHT, "Analog-Clock")
 	defer rl.CloseWindow()
@@ -34,6 +36,9 @@ func main() {
 
 		if rl.GetCharPressed() == rune('?') {
 			showDigitalTime = !showDigitalTime
+		}
+		if rl.IsKeyPressed(rl.KeyG) {
+			Debug = !Debug
 		}
 
 		rl.BeginDrawing()
@@ -120,6 +125,13 @@ func DrawMinuteHand(minute, second int) {
 	startV := rl.NewVector2(CENTER_X, CENTER_Y)
 
 	rl.DrawLineEx(startV, endV, HAND_THINKNESS, rl.Blue)
+
+	if Debug {
+		x := float32(RADIUS * math.Cos(float64(angle)*rl.Deg2rad))
+		y := float32(RADIUS * math.Sin(float64(angle)*rl.Deg2rad))
+		endV = rl.NewVector2(CENTER_X+x, CENTER_Y-y)
+		rl.DrawLineEx(startV, endV, 1, rl.Blue)
+	}
 }
 
 func DrawHourHand(hour, minute, second int) {
@@ -140,6 +152,13 @@ func DrawHourHand(hour, minute, second int) {
 	startV := rl.NewVector2(CENTER_X, CENTER_Y)
 
 	rl.DrawLineEx(startV, endV, HAND_THINKNESS, rl.Red)
+
+	if Debug {
+		x := float32(RADIUS * math.Cos(float64(angle)*rl.Deg2rad))
+		y := float32(RADIUS * math.Sin(float64(angle)*rl.Deg2rad))
+		endV = rl.NewVector2(CENTER_X+x, CENTER_Y-y)
+		rl.DrawLineEx(startV, endV, 1, rl.Red)
+	}
 }
 
 func DrawHourNumbers() {
