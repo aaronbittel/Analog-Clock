@@ -16,7 +16,8 @@ const (
 	CENTER_X = WIDTH / 2
 	CENTER_Y = HEIGHT / 2
 
-	FONTSIZE = 32
+	FONTSIZE       = 32
+	HAND_THINKNESS = 5
 )
 
 func main() {
@@ -29,6 +30,7 @@ func main() {
 
 	for !rl.WindowShouldClose() {
 		now := time.Now()
+		hour, minute, second := now.Clock()
 
 		if rl.GetCharPressed() == rune('?') {
 			showDigitalTime = !showDigitalTime
@@ -41,9 +43,9 @@ func main() {
 
 		DrawMinuteMarkers()
 		DrawHourNumbers()
-		DrawHourHand(now.Hour(), now.Minute(), now.Hour())
-		DrawMinuteHand(now.Minute(), now.Second())
-		DrawSecondHand(now.Second())
+		DrawHourHand(hour, minute, second)
+		DrawMinuteHand(minute, second)
+		DrawSecondHand(second)
 
 		if showDigitalTime {
 			text := now.Format(time.TimeOnly)
@@ -90,10 +92,7 @@ func DrawMinuteMarkers() {
 }
 
 func DrawSecondHand(second int) {
-	const (
-		RADIUS_PERC = 0.98
-		THINKNESS   = 5
-	)
+	const RADIUS_PERC = 0.98
 
 	secondProgress := 360 / 60 * second
 
@@ -104,7 +103,7 @@ func DrawSecondHand(second int) {
 	endV := rl.NewVector2(CENTER_X+x, CENTER_Y-y)
 	startV := rl.NewVector2(CENTER_X, CENTER_Y)
 
-	rl.DrawLineEx(startV, endV, THINKNESS, rl.Green)
+	rl.DrawLineEx(startV, endV, HAND_THINKNESS, rl.Green)
 }
 
 func DrawMinuteHand(minute, second int) {
@@ -120,11 +119,14 @@ func DrawMinuteHand(minute, second int) {
 	endV := rl.NewVector2(CENTER_X+x, CENTER_Y-y)
 	startV := rl.NewVector2(CENTER_X, CENTER_Y)
 
-	rl.DrawLineEx(startV, endV, 5, rl.Blue)
+	rl.DrawLineEx(startV, endV, HAND_THINKNESS, rl.Blue)
 }
 
 func DrawHourHand(hour, minute, second int) {
-	const RADIUS_PERC = 0.65
+	const (
+		RADIUS_PERC  = 0.65
+		DEG_PER_HOUR = 360 / 12
+	)
 
 	hourProgress := DEG_PER_HOUR * float32(hour%12)
 	minuteProgress := DEG_PER_HOUR * float32(minute) / 60
@@ -137,16 +139,15 @@ func DrawHourHand(hour, minute, second int) {
 	endV := rl.NewVector2(CENTER_X+x, CENTER_Y-y)
 	startV := rl.NewVector2(CENTER_X, CENTER_Y)
 
-	rl.DrawLineEx(startV, endV, 5, rl.Red)
+	rl.DrawLineEx(startV, endV, HAND_THINKNESS, rl.Red)
 }
 
 func DrawHourNumbers() {
-	for angle, hour := -60, 0; angle <= 270; angle, hour = angle+360/12, hour+1 {
+	for angle, hour := -60, 1; angle <= 270; angle, hour = angle+360/12, hour+1 {
 		x := int32(RADIUS * 0.75 * math.Cos(float64(angle)*rl.Deg2rad))
 		y := int32(RADIUS * 0.75 * math.Sin(float64(angle)*rl.Deg2rad))
-		hourStr := fmt.Sprintf("%d", hour+1)
+		hourStr := fmt.Sprintf("%d", hour)
 		size := rl.MeasureText(hourStr, FONTSIZE)
 		rl.DrawText(hourStr, CENTER_X+x-size/2, CENTER_Y+y-FONTSIZE/2, FONTSIZE, rl.Black)
 	}
-
 }
